@@ -33,15 +33,29 @@ cargo run
 
 ### Basic Commands
 ```bash
-# Start the application
+# Start the application (production mode)
 finance
 
 # Development mode (with sample data)
 cargo run
 
-# Production mode
-RUST_ENV=production finance
+# Force production mode (if needed)
+RUST_ENV=production cargo run
 ```
+
+### Development vs Production Mode
+
+The application automatically detects the running mode:
+
+- **Development Mode**: When running with `cargo run` or from the development directory
+  - Uses in-memory database (resets on restart)
+  - Loads sample data for testing
+  - Shows development indicator
+
+- **Production Mode**: When running installed binary
+  - Uses persistent SQLite database
+  - Starts with empty database
+  - Clean interface without development indicators
 
 ### Interface Navigation
 - **Arrow keys** (↑/↓): Navigate options

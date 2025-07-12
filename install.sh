@@ -43,8 +43,7 @@ echo "📄 Run 'finance' to start the application"
 
 # Set production mode
 echo "🔧 Setting up production mode..."
-echo 'export RUST_ENV=production' >> ~/.bashrc
-echo "✅ Production mode enabled"
+echo "✅ Production mode is now enabled automatically when using installed binary"
 
 echo ""
 echo "🚀 Quick start:"

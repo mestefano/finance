@@ -9,17 +9,21 @@ use std::io::{self, Write};
 use crate::transaction::{TransactionBuilder, TransactionType};
 
 fn main() {
-    let db = if env::var("RUST_ENV").unwrap_or_default() == "production" {
-        Database::new("finance.db").expect("Failed to create database")
-    } else {
-        // Development mode - use in-memory database
+    // Detectar si estamos en modo desarrollo o producción
+    let is_development = is_development_mode();
+    
+    let db = if is_development {
+        // Development mode - use in-memory database with sample data
         let db = Database::new_in_memory().expect("Failed to create in-memory database");
         populate_sample_data(&db);
         db
+    } else {
+        // Production mode - use persistent database
+        Database::new("finance.db").expect("Failed to create database")
     };
 
     println!("Welcome to the Finance Manager!");
-    if env::var("RUST_ENV").unwrap_or_default() != "production" {
+    if is_development {
         println!("🚧 Running in development mode with sample data");
     }
 
@@ -232,6 +236,41 @@ fn select_transaction_type() -> TransactionType {
         1 => TransactionType::Income,
         _ => TransactionType::Expense,
     }
+}
+
+/// Detecta si estamos en modo desarrollo basándose en varios factores
+fn is_development_mode() -> bool {
+    // Método 1: Variable de entorno RUST_ENV (manual override)
+    if let Ok(rust_env) = env::var("RUST_ENV") {
+        return rust_env != "production";
+    }
+    
+    // Método 2: Variable de entorno CARGO (presente cuando se ejecuta con cargo)
+    if env::var("CARGO").is_ok() {
+        return true;
+    }
+    
+    // Método 3: Detectar si el binario está en target/debug/
+    if let Ok(current_exe) = env::current_exe() {
+        if let Some(path_str) = current_exe.to_str() {
+            // Si está en target/debug/, es desarrollo
+            if path_str.contains("target/debug/") {
+                return true;
+            }
+            // Si está en target/release/ pero ejecutándose desde el directorio de desarrollo
+            if path_str.contains("target/release/") {
+                // Verificar si estamos en el directorio de desarrollo
+                if let Ok(current_dir) = env::current_dir() {
+                    if current_dir.join("Cargo.toml").exists() && current_dir.join("src").exists() {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    
+    // Por defecto, usar modo producción
+    false
 }
 
 #[cfg(test)]
