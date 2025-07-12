@@ -1,0 +1,40 @@
+# Rust
+/target/
+**/*.rs.bk
+*.pdb
+
+# Database files
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+
+# Backup files
+*.backup.*
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Distribution files
+/dist/
+/releases/
+
+# Logs
+*.log
+
+# Local configuration
+.env
+.env.local
